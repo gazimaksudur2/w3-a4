@@ -1,3 +1,10 @@
+# Project level binaries
+rental-property-api
+w3-a4
+
+# Beego build files
+tmp/
+
 # Go binaries
 *.exe
 *.out
