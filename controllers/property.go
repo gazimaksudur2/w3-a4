@@ -18,6 +18,17 @@ type PropertyController struct {
 // @Failure 500 {object} models.ErrorResponse
 // @router /v1/properties [get]
 func (c *PropertyController) GetAll() {
-	c.Data["json"] = "Get all properties"
+	properties, err := services.GetAllProperties()
+
+	if err != nil {
+		c.Data["json"] = map[string]string{
+			"Error": err.Error(),
+		}
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		c.ServeJSON()
+		return
+	}
+
+	c.Data["json"] = properties
 	c.ServeJSON()
 }
