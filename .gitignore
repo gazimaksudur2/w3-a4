@@ -1,0 +1,26 @@
+# Go binaries
+*.exe
+*.out
+*.test
+
+# Build output
+bin/
+build/
+
+# Dependency vendor folder (optional)
+vendor/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+*.txt
+
+# Environment files
+.env

@@ -1,0 +1,41 @@
+{
+    "id": "BC-1000001",
+    "feed": 11,
+    "country": "Japan",
+    "country_code": "JP",
+    "state": "Tokyo",
+    "state_abbr": null,
+    "city": "Shinjuku",
+    "display": "Shinjuku, Japan",
+    "location_id": "6100001",
+    "property_name": "Shinjuku Grand Resort",
+    "property_slug": "shinjuku-grand-resort-0001",
+    "property_type_category": "Resort",
+    "usd_price": 116.69,
+    "occupancy": 3,
+    "bedroom_count": 2,
+    "bathroom_count": 2,
+    "number_of_review": 304,
+    "review_score_general": 4.2,
+    "star_rating": 5,
+    "amenity_categories": [
+      "Breakfast Included",
+      "Child Friendly",
+      "Pool"
+    ],
+    "lonlat": {
+      "coordinates": [
+        139.6917,
+        35.6895
+      ]
+    },
+    "categories": "[{\"LocationID\": \"89\",\"Name\": \"Japan\",\"Type\": \"country\",\"Slug\": \"japan\",\"Display\": [\"japan\"]},{\"LocationID\": \"6050001\",\"Name\": \"Tokyo\",\"Type\": \"state\",\"Slug\": \"japan/tokyo\",\"Display\": [\"japan\",\"tokyo\"]},{\"LocationID\": \"6100001\",\"Name\": \"Shinjuku\",\"Type\": \"city\",\"Slug\": \"japan/tokyo/shinjuku\",\"Display\": [\"japan\",\"tokyo\",\"shinjuku\"]}]",
+    "published": false,
+    "images": [
+      "image-1.jpg",
+      "image-2.jpg",
+      "image-3.jpg",
+      "image-4.jpg",
+      "image-5.jpg"
+    ]
+  }
