@@ -3,18 +3,34 @@ package services
 import (
 	"encoding/json"
 	"os"
+	"sync"
 	"w3-a4/models"
 )
 
 
 var properties []models.SourceProperty
 
-func init() {
-	err := loadProperties()
+var once sync.Once
+var loadError error
 
-	if err != nil {
-		panic(err)
+// func init() {
+// 	err := loadProperties()
+
+// 	if err != nil {
+// 		panic(err)
+// 	}
+// }
+
+func GetAllProperties() ([]models.SourceProperty, error){
+	once.Do(func(){
+		loadError = loadProperties()
+	})
+
+	if loadError != nil {
+		return nil, loadError
 	}
+
+	return properties, nil
 }
 
 func loadProperties() error {
@@ -24,13 +40,6 @@ func loadProperties() error {
 	}
 
 	err = json.Unmarshal(file, &properties)
-	if err != nil {
-		return  err
-	}
 
-	return nil
-}
-
-func GetAllProperties() ([]models.SourceProperty, error){
-	return properties, nil
+	return err
 }
