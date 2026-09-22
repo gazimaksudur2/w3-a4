@@ -46,7 +46,7 @@ func TransformPropety(source models.SourceProperty) models.PropertyResponse {
 	}
 	if len(source.LonLat.Coordinates) >= 2 {
 		response.GeoInfo.Lon = source.LonLat.Coordinates[0]
-		response.GeoInfo.Lat = source.LonLat.Coordinates[0]
+		response.GeoInfo.Lat = source.LonLat.Coordinates[1]
 	}
 	response.Property = models.PropertyInfo{
 		Amenities:    source.AmenityCategories,

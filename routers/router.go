@@ -19,6 +19,11 @@ func init() {
 			beego.NSInclude(
 				&controllers.PropertyController{},
 			),
+			beego.NSRouter(
+				"/:id",
+				&controllers.PropertyController{},
+				"get:GetByID",
+			),
 		),
 	)
 	beego.AddNamespace(ns)
