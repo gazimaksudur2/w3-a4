@@ -13,14 +13,6 @@ var properties []models.SourceProperty
 var once sync.Once
 var loadError error
 
-// func init() {
-// 	err := loadProperties()
-
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
-
 func GetAllProperties() ([]models.SourceProperty, error){
 	once.Do(func(){
 		loadError = loadProperties()
