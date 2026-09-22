@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"strconv"
+	"strings"
 	"w3-a4/models"
 	"w3-a4/services"
 
@@ -19,18 +21,139 @@ type PropertyController struct {
 // @Failure 500 {object} models.ErrorResponse
 // @router /v1/properties [get]
 func (c *PropertyController) GetAll() {
-	properties, err := services.GetAllProperties()
+	filter := models.PropertyFilter{}
 
-	if err != nil {
-		c.Data["json"] = map[string]string{
-			"Error": err.Error(),
+	if value:=c.GetString("min_price"); value!="" {
+		price, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid min_price",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
 		}
-		c.Ctx.ResponseWriter.WriteHeader(500)
-		c.ServeJSON()
-		return
+		filter.MinPrice = &price
 	}
 
-	c.Data["json"] = properties
+	if value:=c.GetString("max_price"); value != "" {
+		price, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid max_price",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.MaxPrice = &price
+	}
+
+	if value := c.GetString("feed"); value!="" {
+		feed, err := strconv.Atoi(value)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid feed",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.Feed = &feed
+	}
+
+	if value := c.GetString("published"); value != "" {
+		published, err := strconv.ParseBool(value)
+		if err!=nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid published value",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.Published = &published
+	}
+
+	if value := c.GetString("property_type"); value != "" {
+		validTypes := map[string]bool{
+			"Hotel": true,
+			"House": true,
+			"Apartment": true,
+			"Villa": true,
+			"Resort": true,
+			"Hostel": true,
+		}
+		
+		if !validTypes[value] {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid property_type",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.PropertyType = &value
+	}
+
+	if value := c.GetString("min_review_score"); value != "" {
+		score, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid min_review_score",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.MinReviewScore = &score
+	}
+
+	if value := c.GetString("min_reviews"); value != "" {
+		reviews, err := strconv.Atoi(value)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid min_reviews",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.MinReviews = &reviews
+	}
+
+	if value := c.GetString("min_bedroom"); value != "" {
+		bedroom, err := strconv.Atoi(value)
+		if err != nil {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid min_bedroom",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.MinBedroom = &bedroom
+	}
+
+	if value := c.GetString("amenities"); value != "" {
+		filter.Amenities = strings.Split(value, ",")
+	}
+
+	if value := c.GetString("limit"); value != "" {
+		limit, err := strconv.Atoi(value)
+		if err != nil || limit < 0 {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid limit",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+		filter.Limit = limit
+	}
+
+	response := services.ListProperties(filter)
+	c.Data["json"] = response
 	c.ServeJSON()
 }
 
