@@ -175,3 +175,52 @@ func TestFilterProperties_Empty(t *testing.T) {
 		t.Errorf("expected 0 result got %d", len(result))
 	}
 }
+
+func TestGetPropertyByID_Found(t *testing.T) {
+
+	property := models.SourceProperty{
+		ID: "TEST-ID",
+		Images: []string{
+			"a.jpg",
+		},
+	}
+
+	sourceProperties = []models.SourceProperty{
+		property,
+	}
+
+	result, err := GetPropertyByID("TEST-ID")
+
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+
+	if result == nil {
+		t.Error("expected property but got nil")
+	}
+
+	if result.ID != "TEST-ID" {
+		t.Errorf("expected TEST-ID got %s", result.ID)
+	}
+}
+
+func TestGetPropertyByID_NotFound(t *testing.T) {
+
+	sourceProperties = []models.SourceProperty{
+		{
+			ID: "TEST-ID",
+		},
+	}
+
+	result, err := GetPropertyByID("UNKNOWN-ID")
+
+
+	if err == nil {
+		t.Error("expected error but got nil")
+	}
+
+
+	if result != nil {
+		t.Error("expected nil property")
+	}
+}

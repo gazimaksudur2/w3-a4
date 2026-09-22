@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 	"w3-a4/models"
@@ -200,22 +201,18 @@ func(c *PropertyController) GetByID() {
 	property, err := services.GetPropertyByID(id)
 
 	if err!=nil {
+		status := 500
+		if errors.Is(err, services.ErrPropertyNotFound) {
+			status = 404
+		}
 		c.Data["json"] = models.ErrorResponse{
 			Error: err.Error(),
 		}
-		c.Ctx.ResponseWriter.WriteHeader(500)
+		c.Ctx.ResponseWriter.WriteHeader(status)
 		c.ServeJSON()
 		return
 	}
-
-	if property == nil {
-		c.Data["json"] = models.ErrorResponse{
-			Error: "Property not found",
-		}
-		c.Ctx.ResponseWriter.WriteHeader(404)
-		c.ServeJSON()
-		return
-	}
+	
 	c.Data["json"] = property
 	c.ServeJSON()
 }

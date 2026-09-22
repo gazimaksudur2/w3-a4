@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 	"sync"
 	"w3-a4/models"
@@ -9,6 +10,7 @@ import (
 
 
 var sourceProperties []models.SourceProperty
+var ErrPropertyNotFound = errors.New("Property not found")
 
 var once sync.Once
 var loadError error
@@ -48,7 +50,7 @@ func GetPropertyByID(id string) (*models.PropertyResponse, error) {
 			return &response, nil
 		}
 	}
-	return nil, nil
+	return nil, ErrPropertyNotFound
 }
 
 func ListProperties(
