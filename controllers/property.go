@@ -49,7 +49,7 @@ func(c *PropertyController) GetByID() {
 
 	if property == nil {
 		c.Data["json"] = models.ErrorResponse{
-			Error: "Property not found for the provided ID",
+			Error: "Property not found",
 		}
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		c.ServeJSON()

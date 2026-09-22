@@ -27,7 +27,7 @@ func parseBreadcrumbs(categoryString string) []string {
 	return result
 }
 
-func TransformPropety(source models.SourceProperty) models.PropertyResponse {
+func TransformProperty(source models.SourceProperty) models.PropertyResponse {
 	response := models.PropertyResponse{}
 
 	response.ID = source.ID
