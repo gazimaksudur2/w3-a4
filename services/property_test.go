@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"testing"
 	"w3-a4/models"
 )
@@ -8,44 +9,44 @@ import (
 func createTestProperties() []models.SourceProperty {
 	return []models.SourceProperty{
 		{
-			ID: "1",
-			Feed: 11,
-			Published: false,
-			USDPrice: 100,
-			StarRating: 5,
-			ReviewScoreGeneral: 4.5,
-			NumberOfReview: 50,
+			ID:                   "1",
+			Feed:                 11,
+			Published:            false,
+			USDPrice:             100,
+			StarRating:           5,
+			ReviewScoreGeneral:   4.5,
+			NumberOfReview:       50,
 			PropertyTypeCategory: "Hotel",
-			BedroomCount: 3,
+			BedroomCount:         3,
 			AmenityCategories: []string{
 				"Pool",
 				"Internet",
 			},
 		},
 		{
-			ID: "2",
-			Feed: 12,
-			Published: true,
-			USDPrice: 200,
-			StarRating: 3,
-			ReviewScoreGeneral: 3.5,
-			NumberOfReview: 10,
+			ID:                   "2",
+			Feed:                 12,
+			Published:            true,
+			USDPrice:             200,
+			StarRating:           3,
+			ReviewScoreGeneral:   3.5,
+			NumberOfReview:       10,
 			PropertyTypeCategory: "Apartment",
-			BedroomCount: 1,
+			BedroomCount:         1,
 			AmenityCategories: []string{
 				"Parking",
 			},
 		},
 		{
-			ID: "3",
-			Feed: 11,
-			Published: true,
-			USDPrice: 300,
-			StarRating: 4,
-			ReviewScoreGeneral: 4.8,
-			NumberOfReview: 100,
+			ID:                   "3",
+			Feed:                 11,
+			Published:            true,
+			USDPrice:             300,
+			StarRating:           4,
+			ReviewScoreGeneral:   4.8,
+			NumberOfReview:       100,
 			PropertyTypeCategory: "Villa",
-			BedroomCount: 4,
+			BedroomCount:         4,
 			AmenityCategories: []string{
 				"Gym",
 			},
@@ -96,24 +97,24 @@ func TestFilterProperties_AND(t *testing.T) {
 	feed := 11
 
 	filter := models.PropertyFilter{
-		Feed: &feed,
+		Feed:      &feed,
 		Published: &published,
 	}
-	
+
 	result := FilterProperties(properties, filter)
-	if len(result)!=1 {
+	if len(result) != 1 {
 		t.Errorf(
 			"expected 1 result got %d", len(result),
 		)
 	}
-	if result[0].ID!="1" {
+	if result[0].ID != "1" {
 		t.Errorf(
 			"expected ID 1 got %s", result[0].ID,
 		)
 	}
 }
 
-func TestFilterProperties_PriceRange(t *testing.T){
+func TestFilterProperties_PriceRange(t *testing.T) {
 	properties := createTestProperties()
 	min := 50.0
 	max := 150.0
@@ -152,7 +153,7 @@ func TestFilterProperties_Combined(t *testing.T) {
 		},
 	}
 	result := FilterProperties(properties, filter)
-	if len(result)!=1 {
+	if len(result) != 1 {
 		t.Errorf("expected 1 result got %d", len(result))
 	}
 	if result[0].ID != "1" {
@@ -168,28 +169,28 @@ func TestFilterProperties_Empty(t *testing.T) {
 	}
 
 	result := FilterProperties(properties, filter)
-	if result==nil {
+	if result == nil {
 		t.Errorf("expected empty slice, got nil")
 	}
-	if len(result)!=0 {
+	if len(result) != 0 {
 		t.Errorf("expected 0 result got %d", len(result))
 	}
 }
 
 func TestGetPropertyByID_Found(t *testing.T) {
-
-	property := models.SourceProperty{
-		ID: "TEST-ID",
-		Images: []string{
-			"a.jpg",
+	properties := []models.SourceProperty{
+		{
+			ID: "TEST-ID",
+			Images: []string{
+				"a.jpg",
+			},
 		},
 	}
 
-	sourceProperties = []models.SourceProperty{
-		property,
-	}
-
-	result, err := GetPropertyByID("TEST-ID")
+	result, err := FindPropertyByID(
+		properties,
+		"TEST-ID",
+	)
 
 	if err != nil {
 		t.Errorf("unexpected error: %v", err)
@@ -200,25 +201,26 @@ func TestGetPropertyByID_Found(t *testing.T) {
 	}
 
 	if result.ID != "TEST-ID" {
-		t.Errorf("expected TEST-ID got %s", result.ID)
+		t.Errorf(
+			"expected TEST-ID got %s",
+			result.ID,
+		)
 	}
 }
 
 func TestGetPropertyByID_NotFound(t *testing.T) {
 
-	sourceProperties = []models.SourceProperty{
+	properties := []models.SourceProperty{
 		{
 			ID: "TEST-ID",
 		},
 	}
 
-	result, err := GetPropertyByID("UNKNOWN-ID")
+	result, err := FindPropertyByID(properties, "UNKNOWN-ID")
 
-
-	if err == nil {
-		t.Error("expected error but got nil")
-	}
-
+	if !errors.Is(err, ErrPropertyNotFound) {
+	t.Errorf("expected ErrPropertyNotFound, got %v", err)
+}
 
 	if result != nil {
 		t.Error("expected nil property")

@@ -44,13 +44,7 @@ func GetPropertyByID(id string) (*models.PropertyResponse, error) {
 		return nil, err
 	}
 
-	for _, property := range properties {
-		if property.ID == id{
-			response := TransformProperty(property)
-			return &response, nil
-		}
-	}
-	return nil, ErrPropertyNotFound
+	return FindPropertyByID(properties, id)
 }
 
 func ListProperties(
@@ -77,4 +71,19 @@ func ListProperties(
 			Items: items,
 		},
 	}, nil
+}
+
+func FindPropertyByID(properties []models.SourceProperty, id string) (*models.PropertyResponse, error) {
+
+	for _, property := range properties {
+
+		if property.ID == id {
+
+			response := TransformProperty(property)
+
+			return &response, nil
+		}
+	}
+
+	return nil, ErrPropertyNotFound
 }

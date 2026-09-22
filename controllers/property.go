@@ -10,7 +10,6 @@ import (
 	beego "github.com/beego/beego/v2/server/web"
 )
 
-
 type PropertyController struct {
 	beego.Controller
 }
@@ -24,7 +23,7 @@ type PropertyController struct {
 func (c *PropertyController) GetAll() {
 	filter := models.PropertyFilter{}
 
-	if value:=c.GetString("min_price"); value!="" {
+	if value := c.GetString("min_price"); value != "" {
 		price, err := strconv.ParseFloat(value, 64)
 		if err != nil || price < 0 {
 			c.Data["json"] = models.ErrorResponse{
@@ -37,9 +36,9 @@ func (c *PropertyController) GetAll() {
 		filter.MinPrice = &price
 	}
 
-	if value:=c.GetString("max_price"); value != "" {
+	if value := c.GetString("max_price"); value != "" {
 		price, err := strconv.ParseFloat(value, 64)
-		if err != nil {
+		if err != nil || price < 0 {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid max_price",
 			}
@@ -50,7 +49,7 @@ func (c *PropertyController) GetAll() {
 		filter.MaxPrice = &price
 	}
 
-	if value := c.GetString("feed"); value!="" {
+	if value := c.GetString("feed"); value != "" {
 		feed, err := strconv.Atoi(value)
 		if err != nil {
 			c.Data["json"] = models.ErrorResponse{
@@ -61,7 +60,7 @@ func (c *PropertyController) GetAll() {
 			return
 		}
 
-		validFeeds := map[int]bool {
+		validFeeds := map[int]bool{
 			11: true,
 			12: true,
 			22: true,
@@ -81,7 +80,7 @@ func (c *PropertyController) GetAll() {
 
 	if value := c.GetString("published"); value != "" {
 		published, err := strconv.ParseBool(value)
-		if err!=nil {
+		if err != nil {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid published value",
 			}
@@ -94,14 +93,14 @@ func (c *PropertyController) GetAll() {
 
 	if value := c.GetString("property_type"); value != "" {
 		validTypes := map[string]bool{
-			"Hotel": true,
-			"House": true,
+			"Hotel":     true,
+			"House":     true,
 			"Apartment": true,
-			"Villa": true,
-			"Resort": true,
-			"Hostel": true,
+			"Villa":     true,
+			"Resort":    true,
+			"Hostel":    true,
 		}
-		
+
 		if !validTypes[value] {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid property_type",
@@ -196,11 +195,11 @@ func (c *PropertyController) GetAll() {
 	c.ServeJSON()
 }
 
-func(c *PropertyController) GetByID() {
+func (c *PropertyController) GetByID() {
 	id := c.Ctx.Input.Param(":id")
 	property, err := services.GetPropertyByID(id)
 
-	if err!=nil {
+	if err != nil {
 		status := 500
 		if errors.Is(err, services.ErrPropertyNotFound) {
 			status = 404
@@ -212,7 +211,7 @@ func(c *PropertyController) GetByID() {
 		c.ServeJSON()
 		return
 	}
-	
+
 	c.Data["json"] = property
 	c.ServeJSON()
 }
