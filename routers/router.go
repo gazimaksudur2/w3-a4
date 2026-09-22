@@ -16,8 +16,10 @@ import (
 func init() {
 	ns := beego.NewNamespace("/v1",
 		beego.NSNamespace("/properties",
-			beego.NSInclude(
+			beego.NSRouter(
+				"",
 				&controllers.PropertyController{},
+				"get:GetAll",
 			),
 			beego.NSRouter(
 				"/:id",

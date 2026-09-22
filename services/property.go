@@ -53,8 +53,12 @@ func GetPropertyByID(id string) (*models.PropertyResponse, error) {
 
 func ListProperties(
 	filter models.PropertyFilter,
-) models.PropertyListResponse {
-	sourceProperties, _ := GetAllProperties()
+) (models.PropertyListResponse, error) {
+	sourceProperties, err := GetAllProperties()
+
+	if err != nil {
+		return models.PropertyListResponse{}, err
+	}
 
 	filtered := FilterProperties(sourceProperties, filter)
 	items := make([]models.PropertyResponse, 0)
@@ -70,5 +74,5 @@ func ListProperties(
 			Count: len(items),
 			Items: items,
 		},
-	}
+	}, nil
 }

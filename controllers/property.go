@@ -25,7 +25,7 @@ func (c *PropertyController) GetAll() {
 
 	if value:=c.GetString("min_price"); value!="" {
 		price, err := strconv.ParseFloat(value, 64)
-		if err != nil {
+		if err != nil || price < 0 {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid min_price",
 			}
@@ -54,6 +54,22 @@ func (c *PropertyController) GetAll() {
 		if err != nil {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid feed",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+
+		validFeeds := map[int]bool {
+			11: true,
+			12: true,
+			22: true,
+			24: true,
+		}
+
+		if !validFeeds[feed] {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid feed value",
 			}
 			c.Ctx.ResponseWriter.WriteHeader(400)
 			c.ServeJSON()
@@ -96,9 +112,23 @@ func (c *PropertyController) GetAll() {
 		filter.PropertyType = &value
 	}
 
+	if value := c.GetString("min_star_rating"); value != "" {
+		rating, err := strconv.Atoi(value)
+		if err != nil || rating < 0 {
+			c.Data["json"] = models.ErrorResponse{
+				Error: "invalid min_star_rating",
+			}
+			c.Ctx.ResponseWriter.WriteHeader(400)
+			c.ServeJSON()
+			return
+		}
+
+		filter.MinStarRating = &rating
+	}
+
 	if value := c.GetString("min_review_score"); value != "" {
 		score, err := strconv.ParseFloat(value, 64)
-		if err != nil {
+		if err != nil || score < 0 {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid min_review_score",
 			}
@@ -111,7 +141,7 @@ func (c *PropertyController) GetAll() {
 
 	if value := c.GetString("min_reviews"); value != "" {
 		reviews, err := strconv.Atoi(value)
-		if err != nil {
+		if err != nil || reviews < 0 {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid min_reviews",
 			}
@@ -124,7 +154,7 @@ func (c *PropertyController) GetAll() {
 
 	if value := c.GetString("min_bedroom"); value != "" {
 		bedroom, err := strconv.Atoi(value)
-		if err != nil {
+		if err != nil || bedroom < 0 {
 			c.Data["json"] = models.ErrorResponse{
 				Error: "invalid min_bedroom",
 			}
@@ -152,7 +182,15 @@ func (c *PropertyController) GetAll() {
 		filter.Limit = limit
 	}
 
-	response := services.ListProperties(filter)
+	response, err := services.ListProperties(filter)
+	if err != nil {
+		c.Data["json"] = models.ErrorResponse{
+			Error: err.Error(),
+		}
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		c.ServeJSON()
+		return
+	}
 	c.Data["json"] = response
 	c.ServeJSON()
 }
