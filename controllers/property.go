@@ -14,8 +14,19 @@ type PropertyController struct {
 	beego.Controller
 }
 
-// @Title List all Properties
-// @Description Get properties with filters
+// @Title List Properties
+// @Description Get rental properties with optional filters
+// @Param min_price query number false "Minimum price"
+// @Param max_price query number false "Maximum price"
+// @Param min_review_score query number false "Minimum review score"
+// @Param feed query int false "Property feed (11,12,22,24)"
+// @Param published query bool false "Published status"
+// @Param property_type query string false "Property type"
+// @Param min_star_rating query int false "Minimum star rating"
+// @Param min_reviews query int false "Minimum number of reviews"
+// @Param min_bedroom query int false "Minimum bedrooms"
+// @Param amenities query string false "Comma separated amenities"
+// @Param limit query int false "Maximum number of results"
 // @Success 200 {object} models.PropertyListResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
@@ -195,6 +206,13 @@ func (c *PropertyController) GetAll() {
 	c.ServeJSON()
 }
 
+// @Title Get Property By ID
+// @Description Get a single rental property by ID
+// @Param id path string true "Property ID"
+// @Success 200 {object} models.PropertyResponse
+// @Failure 404 {object} models.ErrorResponse
+// @Failure 500 {object} models.ErrorResponse
+// @router /v1/properties/{id} [get]
 func (c *PropertyController) GetByID() {
 	id := c.Ctx.Input.Param(":id")
 	property, err := services.GetPropertyByID(id)

@@ -6,11 +6,13 @@ import (
 	"os"
 	"sync"
 	"w3-a4/models"
+
+	"github.com/beego/beego/v2/core/logs"
 )
 
 
 var sourceProperties []models.SourceProperty
-var ErrPropertyNotFound = errors.New("Property not found")
+var ErrPropertyNotFound = errors.New("property not found")
 
 var once sync.Once
 var loadError error
@@ -41,6 +43,7 @@ func GetAllProperties() ([]models.SourceProperty, error){
 func GetPropertyByID(id string) (*models.PropertyResponse, error) {
 	properties, err := GetAllProperties()
 	if err!=nil {
+		logs.Error("failed loading property data %v", err)
 		return nil, err
 	}
 

@@ -1,5 +1,4 @@
-
-# Rental Property API
+ # Rental Property API
 
 A RESTful Rental Property API built using **Go** and **Beego**.  
 The API loads rental property data from a JSON file into memory and provides endpoints for listing properties with filters and retrieving a single property by ID.
@@ -169,31 +168,3 @@ Run static analysis:
 ```bash
 go vet ./...
 ```
-
----
-
-## Why this README fits your submission
-
-It covers the required submission points:
-
-✅ How to install/run  
-✅ `bee run` command  
-✅ API examples  
-✅ Filter examples  
-✅ Test command  
-✅ No unnecessary explanation  
-
-The assignment submission guideline asks specifically for:
-- README with setup instructions
-- sample curl list
-- tests passing
-- server starts with `bee run`  
-:contentReference[oaicite:1]{index=1}
-
-Next after adding this README, I would do:
-
-```bash
-git status
-git add README.md
-git commit -m "finalize project readme with setup and api examples"
-````
