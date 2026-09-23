@@ -10,7 +10,7 @@ func init() {
     beego.GlobalControllerRouter["w3-a4/controllers:PropertyController"] = append(beego.GlobalControllerRouter["w3-a4/controllers:PropertyController"],
         beego.ControllerComments{
             Method: "GetAll",
-            Router: `/v1/properties`,
+            Router: `/properties`,
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -19,7 +19,7 @@ func init() {
     beego.GlobalControllerRouter["w3-a4/controllers:PropertyController"] = append(beego.GlobalControllerRouter["w3-a4/controllers:PropertyController"],
         beego.ControllerComments{
             Method: "GetByID",
-            Router: `/v1/properties/{id}`,
+            Router: `/properties/:id`,
             AllowHTTPMethods: []string{"get"},
             MethodParams: param.Make(),
             Filters: nil,

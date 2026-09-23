@@ -30,7 +30,7 @@ type PropertyController struct {
 // @Success 200 {object} models.PropertyListResponse
 // @Failure 400 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @router /v1/properties [get]
+// @router /properties [get]
 func (c *PropertyController) GetAll() {
 	filter := models.PropertyFilter{}
 
@@ -212,7 +212,7 @@ func (c *PropertyController) GetAll() {
 // @Success 200 {object} models.PropertyResponse
 // @Failure 404 {object} models.ErrorResponse
 // @Failure 500 {object} models.ErrorResponse
-// @router /v1/properties/{id} [get]
+// @router /properties/:id [get]
 func (c *PropertyController) GetByID() {
 	id := c.Ctx.Input.Param(":id")
 	property, err := services.GetPropertyByID(id)
