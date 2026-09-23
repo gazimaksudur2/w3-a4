@@ -1,37 +1,78 @@
- # Rental Property API
+# Rental Property API
 
-A RESTful Rental Property API built using **Go** and **Beego**.  
-The API loads rental property data from a JSON file into memory and provides endpoints for listing properties with filters and retrieving a single property by ID.
+A production-style RESTful API for managing and searching rental property information, built with **Go** and the **Beego v2 framework**.
 
-## Technology
+The API provides endpoints for retrieving rental property data, searching properties using multiple filters, and accessing interactive API documentation through **Swagger UI**.
 
-- Go
-- Beego v2
-- JSON file as data source
-- In-memory data storage
+---
 
-## Project Setup
+## Features
 
-### Prerequisites
+* RESTful API architecture using Go and Beego v2
+* Property listing and lookup functionality
+* Search and filtering support
+* In-memory data processing from JSON source data
+* Swagger API documentation
+* API testing support through Swagger UI
+* Unit testing and static code analysis support
 
-Make sure you have:
+---
 
-- Go 1.22 or higher
-- Beego installed
+## Technology Stack
 
-Check Go version:
+| Technology        | Purpose                                |
+| ----------------- | -------------------------------------- |
+| Go                | Backend programming language           |
+| Beego v2          | Web framework and REST API development |
+| JSON              | Property data source                   |
+| Swagger           | API documentation                      |
+| Go Modules        | Dependency management                  |
+
+---
+
+# Project Structure
+
+```
+w3-a4/
+│
+├── controllers/        # API controllers
+├── routers/            # API route configuration
+├── models/             # Data models
+├── swagger/            # Swagger generated documentation assets
+├── main.go             # Application entry point
+├── go.mod              # Go dependency configuration
+└── README.md
+```
+
+---
+
+# Prerequisites
+
+Before running the project, make sure you have:
+
+* Go 1.22 or higher
+* Beego framework installed
+* Git installed
+
+Check your Go installation:
 
 ```bash
 go version
-````
+```
 
-## Install Dependencies
+---
 
-Clone the repository and navigate to the project directory:
+# Installation
+
+Clone the repository:
 
 ```bash
 git clone https://github.com/gazimaksudur2/w3-a4.git
+```
 
+Navigate into the project directory:
+
+```bash
 cd w3-a4
 ```
 
@@ -41,15 +82,17 @@ Install dependencies:
 go mod tidy
 ```
 
-## Run the Application
+---
 
-Start the Beego server:
+# Running the Application
+
+Start the Beego development server:
 
 ```bash
 bee run
 ```
 
-The API will start on:
+The API will be available at:
 
 ```
 http://localhost:8080
@@ -57,11 +100,40 @@ http://localhost:8080
 
 ---
 
-# API Endpoints
+# Swagger API Documentation
+
+This project includes Swagger documentation for all available API routes.
+
+After starting the application, open:
+
+```
+http://localhost:8080/swagger/
+```
+
+Swagger UI allows you to:
+
+* View all available endpoints
+* Check request parameters
+* Test API calls directly from the browser
+* Review API responses
+
+---
+
+# API Base URL
+
+```
+http://localhost:8080/v1
+```
+
+---
+
+# Available API Endpoints
 
 ## 1. Get All Properties
 
-### Endpoint
+Retrieves a list of rental properties.
+
+### Request
 
 ```
 GET /v1/properties
@@ -77,7 +149,9 @@ curl http://localhost:8080/v1/properties
 
 ## 2. Get Property By ID
 
-### Endpoint
+Retrieves a specific property using its unique identifier.
+
+### Request
 
 ```
 GET /v1/properties/:id
@@ -91,9 +165,13 @@ curl http://localhost:8080/v1/properties/BC-1000001
 
 ---
 
-# Filtering Examples
+# Filtering API
 
-## Filter by Feed
+The property listing endpoint supports multiple query filters.
+
+---
+
+## Filter By Feed
 
 ```bash
 curl "http://localhost:8080/v1/properties?feed=11"
@@ -101,7 +179,7 @@ curl "http://localhost:8080/v1/properties?feed=11"
 
 ---
 
-## Filter by Published Status
+## Filter By Published Status
 
 ```bash
 curl "http://localhost:8080/v1/properties?published=false"
@@ -137,7 +215,7 @@ curl "http://localhost:8080/v1/properties?property_type=Hotel"
 
 ## Amenities Filter
 
-Amenities use OR logic.
+Amenities filtering supports multiple values.
 
 Example:
 
@@ -149,13 +227,15 @@ curl "http://localhost:8080/v1/properties?amenities=Internet,Parking"
 
 ## Limit Results
 
+Control the number of returned records:
+
 ```bash
 curl "http://localhost:8080/v1/properties?limit=5"
 ```
 
 ---
 
-# Running Tests
+# Testing
 
 Run all tests:
 
@@ -163,8 +243,59 @@ Run all tests:
 go test ./... -v
 ```
 
-Run static analysis:
+Run Go static analysis:
 
 ```bash
 go vet ./...
 ```
+
+---
+
+# API Response Format
+
+The API returns JSON responses.
+
+Example:
+
+```json
+{
+    "id": "BC-1000001",
+    "property_type": "Hotel",
+    "published": true,
+    "price": 120,
+    "amenities": [
+        "Internet",
+        "Parking"
+    ]
+}
+```
+
+---
+
+# Future Improvements
+
+Possible future enhancements:
+
+* Database integration (PostgreSQL/MySQL)
+* Authentication and authorization
+* JWT-based security
+* Pagination support
+* Docker containerization
+* Cloud deployment
+* Automated CI/CD pipeline
+
+---
+
+# Author
+
+Developed by **Gazi Maksudur**
+
+GitHub:
+
+https://github.com/gazimaksudur2/w3-a4
+
+---
+
+# License
+
+This project is created for educational and development purposes.

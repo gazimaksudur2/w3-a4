@@ -18,7 +18,8 @@ var once sync.Once
 var loadError error
 
 func loadProperties() error {
-	file, err := os.ReadFile("data/rental_properties.json")
+	path := "data/rental_properties.json"
+	file, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}

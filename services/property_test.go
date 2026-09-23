@@ -226,3 +226,88 @@ func TestGetPropertyByID_NotFound(t *testing.T) {
 		t.Error("expected nil property")
 	}
 }
+
+func TestFindPropertyByID_Found(t *testing.T){
+
+	properties := []models.SourceProperty{
+
+		{
+			ID:"TEST001",
+			PropertyName:"Test Hotel",
+		},
+
+	}
+
+
+	result,err := FindPropertyByID(
+		properties,
+		"TEST001",
+	)
+
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+
+	if result == nil {
+		t.Fatal("expected property")
+	}
+
+
+	if result.GeoInfo.Name != "Test Hotel" {
+		t.Errorf(
+			"unexpected property name",
+		)
+	}
+
+}
+
+
+
+func TestFindPropertyByID_NotFound(t *testing.T){
+
+	properties := []models.SourceProperty{}
+
+
+	_,err := FindPropertyByID(
+		properties,
+		"INVALID",
+	)
+
+
+	if err != ErrPropertyNotFound {
+
+		t.Errorf(
+			"expected ErrPropertyNotFound",
+		)
+	}
+
+}
+
+
+
+func TestListProperties_WithLimit(t *testing.T){
+
+	filter := models.PropertyFilter{
+		Limit:5,
+	}
+
+
+	response,err := ListProperties(filter)
+
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+
+	if response.Result.Count > 5 {
+
+		t.Errorf(
+			"limit not applied",
+		)
+
+	}
+
+}
