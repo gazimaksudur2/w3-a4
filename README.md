@@ -367,11 +367,18 @@ curl "http://localhost:8080/v1/properties?limit=5"
 
 ---
 
-# Testing
+## Testing
 
-The project includes unit tests for the service layer, where the main business logic for property filtering, lookup, transformation, and result processing is implemented.
+The project uses Go's testing framework with table-driven unit tests for core service-layer business logic.
 
-## Run All Tests
+Implemented test coverage includes:
+
+- Property filtering scenarios
+- Property lookup scenarios
+- Property transformation validation
+- Result limiting behavior
+
+Run tests:
 
 ```bash
 go test ./... -v

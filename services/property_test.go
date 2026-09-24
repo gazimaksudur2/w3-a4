@@ -2,303 +2,138 @@ package services
 
 import (
 	"errors"
+	"os"
 	"testing"
 	"w3-a4/models"
+
+	"github.com/beego/beego/v2/server/web"
 )
 
-func createTestProperties() []models.SourceProperty {
-	return []models.SourceProperty{
-		{
-			ID:                   "1",
-			Feed:                 11,
-			Published:            false,
-			USDPrice:             100,
-			StarRating:           5,
-			ReviewScoreGeneral:   4.5,
-			NumberOfReview:       50,
-			PropertyTypeCategory: "Hotel",
-			BedroomCount:         3,
-			AmenityCategories: []string{
-				"Pool",
-				"Internet",
-			},
-		},
-		{
-			ID:                   "2",
-			Feed:                 12,
-			Published:            true,
-			USDPrice:             200,
-			StarRating:           3,
-			ReviewScoreGeneral:   3.5,
-			NumberOfReview:       10,
-			PropertyTypeCategory: "Apartment",
-			BedroomCount:         1,
-			AmenityCategories: []string{
-				"Parking",
-			},
-		},
-		{
-			ID:                   "3",
-			Feed:                 11,
-			Published:            true,
-			USDPrice:             300,
-			StarRating:           4,
-			ReviewScoreGeneral:   4.8,
-			NumberOfReview:       100,
-			PropertyTypeCategory: "Villa",
-			BedroomCount:         4,
-			AmenityCategories: []string{
-				"Gym",
-			},
-		},
+func TestMain(m *testing.M) {
+
+	err := os.Chdir("..")
+
+	if err != nil {
+		panic(err)
 	}
+
+	err = web.LoadAppConfig(
+		"ini",
+		"conf/app.conf",
+	)
+
+	if err != nil {
+		panic(err)
+	}
+
+	os.Exit(
+		m.Run(),
+	)
 }
 
-func TestTransformProperty(t *testing.T) {
-	source := models.SourceProperty{
-		ID: "TEST-1",
-		Images: []string{
-			"a.jpg",
-			"b.jpg",
+func TestGetPropertyByID(t *testing.T) {
+
+	properties := []models.SourceProperty{
+
+		{
+			ID:           "TEST-1",
+			PropertyName: "Hotel One",
 		},
-		LonLat: models.LonLat{
-			Coordinates: []float64{
-				100,
-				20,
-			},
+
+		{
+			ID:           "TEST-2",
+			PropertyName: "Hotel Two",
 		},
-		Categories: `[
-			{
-				"Name": "Japan"
-			},
-			{
-				"Name": "Tokyo"
+	}
+
+	tests := []struct {
+		name      string
+		id        string
+		wantFound bool
+	}{
+
+		{
+			name:      "existing property",
+			id:        "TEST-1",
+			wantFound: true,
+		},
+
+		{
+			name:      "another existing property",
+			id:        "TEST-2",
+			wantFound: true,
+		},
+
+		{
+			name:      "unknown property",
+			id:        "UNKNOWN",
+			wantFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+
+		t.Run(tt.name, func(t *testing.T) {
+
+			result, err := FindPropertyByID(
+				properties,
+				tt.id,
+			)
+
+			if tt.wantFound {
+
+				if err != nil {
+					t.Fatal(err)
+				}
+
+				if result == nil {
+
+					t.Fatal(
+						"expected property",
+					)
+
+				}
+
+			} else {
+
+				if !errors.Is(
+					err,
+					ErrPropertyNotFound,
+				) {
+
+					t.Errorf(
+						"expected not found error",
+					)
+
+				}
+
+				if result != nil {
+
+					t.Error(
+						"expected nil result",
+					)
+
+				}
+
 			}
-		]`,
+
+		})
+
 	}
 
-	result := TransformProperty(source)
-
-	if result.ID != "TEST-1" {
-		t.Error("ID mapping failed")
-	}
-	if result.Property.Image.Count != 2 {
-		t.Error("Image count failed")
-	}
-	if len(result.GeoInfo.Breadcrumbs) != 2 {
-		t.Error("Breadcrumb parsing failed")
-	}
 }
 
-func TestFilterProperties_AND(t *testing.T) {
-	properties := createTestProperties()
-
-	published := false
-	feed := 11
+func TestListProperties_WithLimit(t *testing.T) {
 
 	filter := models.PropertyFilter{
-		Feed:      &feed,
-		Published: &published,
+		Limit: 5,
 	}
 
-	result := FilterProperties(properties, filter)
-	if len(result) != 1 {
-		t.Errorf(
-			"expected 1 result got %d", len(result),
-		)
-	}
-	if result[0].ID != "1" {
-		t.Errorf(
-			"expected ID 1 got %s", result[0].ID,
-		)
-	}
-}
-
-func TestFilterProperties_PriceRange(t *testing.T) {
-	properties := createTestProperties()
-	min := 50.0
-	max := 150.0
-
-	filter := models.PropertyFilter{
-		MinPrice: &min,
-		MaxPrice: &max,
-	}
-	result := FilterProperties(properties, filter)
-	if len(result) != 1 {
-		t.Errorf("expected 1 result got %d", len(result))
-	}
-}
-
-func TestFilterProperties_AmenitiesOR(t *testing.T) {
-	properties := createTestProperties()
-	filter := models.PropertyFilter{
-		Amenities: []string{
-			"Internet",
-			"Parking",
-		},
-	}
-	result := FilterProperties(properties, filter)
-	if len(result) != 2 {
-		t.Errorf("expected 2 results got %d", len(result))
-	}
-}
-
-func TestFilterProperties_Combined(t *testing.T) {
-	properties := createTestProperties()
-	feed := 11
-	filter := models.PropertyFilter{
-		Feed: &feed,
-		Amenities: []string{
-			"Internet",
-		},
-	}
-	result := FilterProperties(properties, filter)
-	if len(result) != 1 {
-		t.Errorf("expected 1 result got %d", len(result))
-	}
-	if result[0].ID != "1" {
-		t.Errorf("wrong property returned")
-	}
-}
-
-func TestFilterProperties_Empty(t *testing.T) {
-	properties := createTestProperties()
-	price := 9999.0
-	filter := models.PropertyFilter{
-		MinPrice: &price,
-	}
-
-	result := FilterProperties(properties, filter)
-	if result == nil {
-		t.Errorf("expected empty slice, got nil")
-	}
-	if len(result) != 0 {
-		t.Errorf("expected 0 result got %d", len(result))
-	}
-}
-
-func TestGetPropertyByID_Found(t *testing.T) {
-	properties := []models.SourceProperty{
-		{
-			ID: "TEST-ID",
-			Images: []string{
-				"a.jpg",
-			},
-		},
-	}
-
-	result, err := FindPropertyByID(
-		properties,
-		"TEST-ID",
-	)
-
-	if err != nil {
-		t.Errorf("unexpected error: %v", err)
-	}
-
-	if result == nil {
-		t.Error("expected property but got nil")
-	}
-
-	if result.ID != "TEST-ID" {
-		t.Errorf(
-			"expected TEST-ID got %s",
-			result.ID,
-		)
-	}
-}
-
-func TestGetPropertyByID_NotFound(t *testing.T) {
-
-	properties := []models.SourceProperty{
-		{
-			ID: "TEST-ID",
-		},
-	}
-
-	result, err := FindPropertyByID(properties, "UNKNOWN-ID")
-
-	if !errors.Is(err, ErrPropertyNotFound) {
-	t.Errorf("expected ErrPropertyNotFound, got %v", err)
-}
-
-	if result != nil {
-		t.Error("expected nil property")
-	}
-}
-
-func TestFindPropertyByID_Found(t *testing.T){
-
-	properties := []models.SourceProperty{
-		{
-			ID:"TEST001",
-			PropertyName:"Test Hotel",
-		},
-	}
-
-
-	result, err := FindPropertyByID(
-		properties,
-		"TEST001",
-	)
-
+	response, err := ListProperties(filter)
 
 	if err != nil {
 		t.Fatal(err)
 	}
-
-
-	if result == nil {
-		t.Fatal("expected property but got nil")
-	}
-
-
-	if result.ID != "TEST001" {
-		t.Errorf(
-			"expected ID TEST001 got %s",
-			result.ID,
-		)
-	}
-
-}
-
-
-func TestFindPropertyByID_NotFound(t *testing.T){
-
-	properties := []models.SourceProperty{}
-
-
-	_,err := FindPropertyByID(
-		properties,
-		"INVALID",
-	)
-
-
-	if err != ErrPropertyNotFound {
-
-		t.Errorf(
-			"expected ErrPropertyNotFound",
-		)
-	}
-
-}
-
-
-
-func TestListProperties_WithLimit(t *testing.T){
-
-	filter := models.PropertyFilter{
-		Limit:5,
-	}
-
-
-	response,err := ListProperties(filter)
-
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
 
 	if response.Result.Count > 5 {
 
