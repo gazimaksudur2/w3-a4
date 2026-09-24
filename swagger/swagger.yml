@@ -6,7 +6,7 @@ info:
   version: 1.0.0
 basePath: /v1
 paths:
-  /v1/properties:
+  /properties:
     get:
       tags:
       - w3-a4/controllersPropertyController
@@ -40,6 +40,13 @@ paths:
         name: property_type
         description: Property type
         type: string
+        enum:
+        - Hotel
+        - House
+        - Apartment
+        - Villa
+        - Resort
+        - Hostel
       - in: query
         name: min_star_rating
         description: Minimum star rating
@@ -73,7 +80,7 @@ paths:
           description: '{object} models.ErrorResponse'
         "500":
           description: '{object} models.ErrorResponse'
-  /v1/properties/{id}:
+  /properties/{id}:
     get:
       tags:
       - w3-a4/controllersPropertyController

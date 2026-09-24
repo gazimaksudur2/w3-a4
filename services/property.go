@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
+	"runtime"
 	"sync"
 	"w3-a4/models"
 
@@ -18,8 +20,14 @@ var once sync.Once
 var loadError error
 
 func loadProperties() error {
-	path := "data/rental_properties.json"
-	file, err := os.ReadFile(path)
+	_, currentFile, _, _ := runtime.Caller(0)
+	baseDir := filepath.Dir(currentFile)
+	path := filepath.Join(
+	baseDir,
+	"../data/rental_properties.json",
+)
+
+file, err := os.ReadFile(path)
 	if err != nil {
 		return err
 	}

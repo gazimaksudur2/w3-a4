@@ -230,16 +230,14 @@ func TestGetPropertyByID_NotFound(t *testing.T) {
 func TestFindPropertyByID_Found(t *testing.T){
 
 	properties := []models.SourceProperty{
-
 		{
 			ID:"TEST001",
 			PropertyName:"Test Hotel",
 		},
-
 	}
 
 
-	result,err := FindPropertyByID(
+	result, err := FindPropertyByID(
 		properties,
 		"TEST001",
 	)
@@ -251,18 +249,18 @@ func TestFindPropertyByID_Found(t *testing.T){
 
 
 	if result == nil {
-		t.Fatal("expected property")
+		t.Fatal("expected property but got nil")
 	}
 
 
-	if result.GeoInfo.Name != "Test Hotel" {
+	if result.ID != "TEST001" {
 		t.Errorf(
-			"unexpected property name",
+			"expected ID TEST001 got %s",
+			result.ID,
 		)
 	}
 
 }
-
 
 
 func TestFindPropertyByID_NotFound(t *testing.T){

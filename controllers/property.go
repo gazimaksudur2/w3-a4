@@ -21,7 +21,7 @@ type PropertyController struct {
 // @Param min_review_score query number false "Minimum review score"
 // @Param feed query int false "Property feed (11,12,22,24)"
 // @Param published query bool false "Published status"
-// @Param property_type query string false "Property type"
+// @Param property_type query string false "Property type (Hotel, House, Apartment, Villa, Resort, Hostel)"
 // @Param min_star_rating query int false "Minimum star rating"
 // @Param min_reviews query int false "Minimum number of reviews"
 // @Param min_bedroom query int false "Minimum bedrooms"
